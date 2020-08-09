@@ -9,10 +9,8 @@ class PrivateFile {
   @Column()
   public key: string;
 
-  @ManyToOne(() => User, (owner: User) => owner.files, {
-    eager: true
-  })
-  public owner: User;
+  @ManyToOne(() => User, (owner: User) => owner.files)
+  public owner?: User;
 }
 
 export default PrivateFile;

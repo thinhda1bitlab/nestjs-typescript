@@ -36,6 +36,12 @@ export class UsersController {
     return this.usersService.deleteAvatar(request.user.id);
   }
 
+  @Get('files')
+  @UseGuards(JwtAuthenticationGuard)
+  async getAllPrivateFiles(@Req() request: RequestWithUser) {
+    return this.usersService.getAllPrivateFiles(request.user.id);
+  }
+
   @Post('files')
   @UseGuards(JwtAuthenticationGuard)
   @UseInterceptors(FileInterceptor('file'))

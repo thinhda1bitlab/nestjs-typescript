@@ -37,7 +37,7 @@ export class PrivateFilesService {
   public async getPrivateFile(fileId: number) {
     const s3 = new S3();
 
-    const fileInfo = await this.privateFilesRepository.findOne({ id: fileId });
+    const fileInfo = await this.privateFilesRepository.findOne({ id: fileId }, { relations: ['owner']});
     if (fileInfo) {
       const stream = await s3.getObject({
         Bucket: this.configService.get('AWS_PRIVATE_BUCKET_NAME'),
@@ -50,5 +50,14 @@ export class PrivateFilesService {
       }
     }
     throw new NotFoundException();
+  }
+
+  public async generatePresignedUrl(key: string) {
+    const s3 = new S3();
+
+    return s3.getSignedUrlPromise('getObject', {
+      Bucket: this.configService.get('AWS_PRIVATE_BUCKET_NAME'),
+      Key: key
+    })
   }
 }
