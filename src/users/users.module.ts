@@ -4,11 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import User from './user.entity';
 import { FilesModule } from '../files/files.module';
 import { UsersController } from './users.controller';
+import { PrivateFilesModule } from '../privateFIles/privateFIles.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     FilesModule,
+    PrivateFilesModule
   ],
   providers: [UsersService],
   exports: [UsersService],
