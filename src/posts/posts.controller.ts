@@ -66,7 +66,6 @@ export default class PostsController {
 
   @Delete(':id')
   @UseGuards(RoleGuard(Role.Admin))
-  @UseGuards(JwtAuthenticationGuard)
   async deletePost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.deletePost(id);
   }
