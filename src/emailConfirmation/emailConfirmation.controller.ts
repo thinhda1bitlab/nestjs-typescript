@@ -11,6 +11,7 @@ import ConfirmEmailDto from './confirmEmail.dto';
 import { EmailConfirmationService } from './emailConfirmation.service';
 import JwtAuthenticationGuard from '../authentication/jwt-authentication.guard';
 import RequestWithUser from '../authentication/requestWithUser.interface';
+import FeatureFlagGuard from '../featureFlags/featureFlag.guard';
 
 @Controller('email-confirmation')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -20,6 +21,7 @@ export class EmailConfirmationController {
   ) {}
 
   @Post('confirm')
+  @UseGuards(FeatureFlagGuard('email-confirmation'))
   async confirm(@Body() confirmationData: ConfirmEmailDto) {
     const email = await this.emailConfirmationService.decodeConfirmationToken(
       confirmationData.token,
@@ -29,6 +31,7 @@ export class EmailConfirmationController {
 
   @Post('resend-confirmation-link')
   @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(FeatureFlagGuard('email-confirmation'))
   async resendConfirmationLink(@Req() request: RequestWithUser) {
     await this.emailConfirmationService.resendConfirmationLink(request.user.id);
   }
