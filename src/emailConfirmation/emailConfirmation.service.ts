@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import VerificationTokenPayload from './verificationTokenPayload.interface';
 import EmailService from '../email/email.service';
 import { UsersService } from '../users/users.service';
+import FeatureFlagsService from '../featureFlags/featureFlags.service';
 
 @Injectable()
 export class EmailConfirmationService {
@@ -12,9 +13,17 @@ export class EmailConfirmationService {
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
+    private readonly featureFlagsService: FeatureFlagsService,
   ) {}
 
-  public sendVerificationLink(email: string) {
+  private isEnabled() {
+    return this.featureFlagsService.isEnabled('email-confirmation');
+  }
+
+  public async sendVerificationLink(email: string) {
+    if (!(await this.isEnabled())) {
+      return;
+    }
     const payload: VerificationTokenPayload = { email };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
@@ -37,6 +46,9 @@ export class EmailConfirmationService {
   }
 
   public async resendConfirmationLink(userId: number) {
+    if (!(await this.isEnabled())) {
+      return;
+    }
     const user = await this.usersService.getById(userId);
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
@@ -45,6 +57,9 @@ export class EmailConfirmationService {
   }
 
   public async confirmEmail(email: string) {
+    if (!(await this.isEnabled())) {
+      return;
+    }
     const user = await this.usersService.getByEmail(email);
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
@@ -53,6 +68,9 @@ export class EmailConfirmationService {
   }
 
   public async decodeConfirmationToken(token: string) {
+    if (!(await this.isEnabled())) {
+      return;
+    }
     try {
       const payload = await this.jwtService.verify(token, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),

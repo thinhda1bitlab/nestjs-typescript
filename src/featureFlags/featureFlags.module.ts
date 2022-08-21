@@ -8,5 +8,6 @@ import FeatureFlagsController from './featureFlags.controller';
   imports: [TypeOrmModule.forFeature([FeatureFlag])],
   controllers: [FeatureFlagsController],
   providers: [FeatureFlagsService],
+  exports: [FeatureFlagsService],
 })
 export class FeatureFlagsModule {}

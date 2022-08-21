@@ -5,6 +5,7 @@ import { EmailModule } from '../email/email.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailConfirmationController } from './emailConfirmation.controller';
 import { UsersModule } from '../users/users.module';
+import { FeatureFlagsModule } from '../featureFlags/featureFlags.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from '../users/users.module';
     }),
     JwtModule.register({}),
     UsersModule,
+    FeatureFlagsModule,
   ],
   providers: [EmailConfirmationService],
   exports: [EmailConfirmationService],
