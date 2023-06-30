@@ -82,7 +82,19 @@ services:
       - data03:/usr/share/elasticsearch/data
     networks:
       - elastic
-
+  kibana:
+    container_name: kb-container
+    image: docker.elastic.co/kibana/kibana:7.9.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://192.168.1.8:9200
+    networks:
+      - elastic
+    depends_on:
+      - es01
+      - es02
+      - es03
+    ports:
+      - 5601:5601
 volumes:
   data01:
     driver: local

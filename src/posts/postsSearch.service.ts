@@ -28,10 +28,30 @@ export default class PostsSearchService {
     const { body } = await this.elasticsearchService.search<PostSearchResult>({
       index: this.index,
       body: {
-        query: {
-          multi_match: {
-            query: text,
-            fields: ['title', 'content']
+        // query: {
+        //   multi_match: {
+        //     query: text,
+        //     fields: ['title', 'content']
+        //   }
+        // }
+        "query": {
+          "bool": {
+            "should": [
+              {
+                "wildcard": {
+                  "title": {
+                    "value": `*${text}*`
+                  }
+                }
+              },
+              {
+                "wildcard": {
+                  "content": {
+                    "value": `*${text}*`
+                  }
+                }
+              }
+            ]
           }
         }
       }
